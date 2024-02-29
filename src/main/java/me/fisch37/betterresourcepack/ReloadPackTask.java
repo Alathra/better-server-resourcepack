@@ -7,6 +7,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
+import java.util.HexFormat;
 
 import static me.fisch37.betterresourcepack.Utils.sendMessage;
 
@@ -16,6 +17,7 @@ public class ReloadPackTask extends BukkitRunnable {
     private final boolean sync;
     private final boolean push;
     private final CommandSender taskAuthor;
+    private final String oldHash;
 
     private FetchTask executingTask;
 
@@ -26,6 +28,7 @@ public class ReloadPackTask extends BukkitRunnable {
         this.packInfo = packInfo;
         this.sync = sync;
         this.push = push;
+        this.oldHash = this.packInfo.isConfigured() ? HexFormat.of().formatHex(this.packInfo.getSha1()) : null;
     }
 
     private static class FetchTask extends BukkitRunnable{
@@ -64,14 +67,15 @@ public class ReloadPackTask extends BukkitRunnable {
         if (this.executingTask.getSuccessState() == null) return;
 
         boolean op_success = this.executingTask.getSuccessState();
+
         if (!op_success) {
             sendToAuthor(ChatColor.RED + "Could not fetch resource pack!");
             // Logging sync allows me to essentially debug the situation. Intention is that only /reload executes with sync
             Bukkit.getLogger().warning("[BSP] Could not fetch resource pack in reload task! Sync: " + this.sync);
         } else if (saveHash()){
             sendToAuthor("Updated pack hash!");
-            Bukkit.getLogger().info("[BSP] Updated pack hash");
-            if (this.push) pushPackToPlayers();
+            Bukkit.getLogger().info("[BSP] Updated pack hash!");
+            if (this.push && this.oldHash != null && !this.oldHash.equals(HexFormat.of().formatHex(this.packInfo.getSha1()))) pushPackToPlayers();
         }
         cancel();
     }

@@ -1,7 +1,6 @@
 package me.fisch37.betterresourcepack;
 
 import org.bukkit.Bukkit;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -9,10 +8,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
-import java.security.DigestInputStream;
 
 public class PackInfo {
     private final BetterServerResourcepack plugin;

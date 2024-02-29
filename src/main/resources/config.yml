@@ -6,3 +6,9 @@ force-hash-update-on-start: true
 # Size of the buffer used in calculating the pack hash.
 # Higher values may increase calculation speeds at the expense of memory consumption.
 pack-buffer-size: 8192
+# This will auto-update the resourcepack link from GitHub releases based on interval in seconds
+github:
+  enabled: false
+  interval: 600
+  username: ''
+  repository: ''

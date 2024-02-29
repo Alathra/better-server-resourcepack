@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -13,6 +14,7 @@ import java.util.HexFormat;
 public final class BetterServerResourcepack extends JavaPlugin {
     private final static String hashCacheName = "pack.sha1";
     private PackInfo packInfo;
+    private BukkitTask githubTask = null;
 
     private final static java.util.logging.Logger logger = Bukkit.getLogger();
 
@@ -46,6 +48,8 @@ public final class BetterServerResourcepack extends JavaPlugin {
         TabExecutor executor = new PackCommand(this.packInfo,this);
         command.setExecutor(executor);
         command.setTabCompleter(executor);
+
+        enableUpdateTask();
     }
 
     private void readFromCache(File cache){
@@ -75,6 +79,32 @@ public final class BetterServerResourcepack extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        disableUpdateTask();
+    }
+
+    private void enableUpdateTask() {
+        final boolean shouldRun = getConfig().getBoolean("github.enabled", false);
+        if (!shouldRun)
+            return;
+
+        if (githubTask != null && githubTask.isCancelled())
+            return;
+
+        final long interval = getConfig().getLong("github.interval", 600L);
+        final long delay = 2400L; // Wait 2 minutes after startup before running first
+        final long period = 20L * interval;
+
+        githubTask = new GithubUpdateTask(this, packInfo).runTaskTimer(this, delay, period);
+    }
+
+    private void disableUpdateTask() {
+        if (githubTask == null)
+            return;
+
+        if (githubTask.isCancelled())
+            return;
+
+        githubTask.cancel();
     }
 
     /*
