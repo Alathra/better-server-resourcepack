@@ -73,9 +73,11 @@ public class ReloadPackTask extends BukkitRunnable {
             // Logging sync allows me to essentially debug the situation. Intention is that only /reload executes with sync
             Bukkit.getLogger().warning("[BSP] Could not fetch resource pack in reload task! Sync: " + this.sync);
         } else if (saveHash()){
-            sendToAuthor("Updated pack hash!");
-            Bukkit.getLogger().info("[BSP] Updated pack hash!");
-            if (this.push && this.oldHash != null && !this.oldHash.equals(HexFormat.of().formatHex(this.packInfo.getSha1()))) pushPackToPlayers();
+            if (this.push && this.oldHash != null && !this.oldHash.equals(HexFormat.of().formatHex(this.packInfo.getSha1()))) {
+                sendToAuthor("Updated pack hash!");
+                Bukkit.getLogger().info("[BSP] Updated pack hash!");
+                pushPackToPlayers();
+            }
         }
         cancel();
     }
