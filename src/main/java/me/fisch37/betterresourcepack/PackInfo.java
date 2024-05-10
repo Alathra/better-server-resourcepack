@@ -69,9 +69,9 @@ public class PackInfo {
     }
 
     private byte[] fetchSha1() throws IOException{
-        Bukkit.getLogger().info("Fetching resource pack hash");
         MessageDigest hashObject;
         try{
+            Bukkit.getLogger().info("Fetching resource pack hash");
             hashObject = MessageDigest.getInstance("SHA-1");
         } catch (NoSuchAlgorithmException e){
             // By the Java Docs: Every JVM has to support SHA1 hashes. There is no reason for this error to even occur
